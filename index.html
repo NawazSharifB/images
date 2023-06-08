@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <title>Image Lazy Loading</title>
+  <head>
+    <style>
+      .container {
+        display: grid;
+        grid: auto / 50% 50%;
+        gap: 5px;
+      }
+
+      .img-wrapper {
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: auto;
+        width: 100%;
+        filter: blur(10px);
+      }
+      
+      .img {
+        height: 100%;
+        width: 100%;
+      }
+
+      .img-wrapper::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        animation: pulse 2.5s infinite;
+        background-color: white;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .img-wrapper.loaded::before {
+        animation: none;
+        content: none;
+      }
+
+      .img-wrapper img {
+        opacity: 0;
+        transition: opacity 250ms ease-in-out;
+      }
+
+      .img-wrapper.loaded {
+        filter: blur(0px);
+      }
+
+      .img-wrapper.loaded img {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container"></div>
+
+    <script>
+      const smallImgUrls = [
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/1-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/2-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/3-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/4-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/5-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/6-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/7-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/8-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/9-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/10-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/11-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/12-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/13-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/14-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/15-small.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/small-images/16-small.jpg?raw=true",
+      ];
+
+      const largeImgUrls = [
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/1.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/2.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/3.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/4.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/5.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/6.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/7.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/8.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/9.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/10.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/11.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/12.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/13.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/14.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/15.jpg?raw=true",
+      "https://github.com/NawazSharifB/images/blob/lazy-loading-test/large-images/16.jpg?raw=true",
+      ];
+
+      const container = document.querySelector('.container');
+
+      for (let i = 0; i < smallImgUrls.length; i++) {
+        const div = document.createElement('div');
+
+        div.classList.add('img-wrapper');
+        div.style.backgroundImage = `url(${smallImgUrls[i]})`;
+
+        const img = document.createElement('img');
+        img.classList.add('img');
+        img.setAttribute('src', largeImgUrls[i]);
+        img.setAttribute('loading', 'lazy');
+
+        function loaded() {
+          div.classList.add('loaded');
+        }
+
+        if (img.complete) {
+          loaded();
+        } else {
+          img.addEventListener("load", loaded);
+        }
+
+        div.appendChild(img);
+
+        container.appendChild(div);
+      }
+
+      console.log('container', container);
+    </script>
+  </body>
+</html>
